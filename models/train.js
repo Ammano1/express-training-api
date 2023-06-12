@@ -1,19 +1,18 @@
-const fs = require('fs');
-const path = require('path');
-const trainsPath = path.join(__dirname, '../data/trains.json');
-
-const getTrainsFromFile = cb => {
-    fs.readFile(trainsPath, (err, fileContent) => {
-        if (err) {
-            cb([]);
-        } else {
-            cb(JSON.parse(fileContent));
-        }
-    });
-}
-
 module.exports = class Train {
-    static fetchAll(cb) {
-        getTrainsFromFile(cb);
-    }
-}
+	constructor(
+		trainExpressName,
+		countryOfOrigin,
+		yearOfConstruction,
+		maxKilometerPerHour,
+		destinationFrom,
+		destinationTo
+	) {
+		this.id = Math.floor(Math.random() * 1000000) + 1;
+		this.trainExpressName = trainExpressName;
+		this.countryOfOrigin = countryOfOrigin;
+		this.yearOfConstruction = yearOfConstruction;
+		this.maxKilometerPerHour = maxKilometerPerHour;
+		this.destinationFrom = destinationFrom;
+		this.destinationTo = destinationTo;
+	}
+};
