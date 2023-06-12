@@ -77,9 +77,9 @@ exports.updateTrain = (req, res, next) => {
 			res.status(500).send('An error occurred while reading the data.');
 			return;
 		}
-		const trainIndex = trains.findIndex(train => train.id === id);
+		const trainIndex = trains.findIndex(train => train.id === Number(id));
 		if (trainIndex < 0) {
-			res.status(404).send(`Train with ID ${trainId} not found.`);
+			res.status(404).send(`Train with ID ${id} not found.`);
 		} else {
 			trains[trainIndex] = train;
 			fs.writeFile(trainsPath, JSON.stringify(trains), err => {
@@ -100,7 +100,9 @@ exports.deleteTrain = (req, res, next) => {
 			res.status(500).send('An error occurred while reading the data.');
 		}
 
-		const trainIndex = trains.findIndex(train => train.id === id);
+		const trainIndex = trains.findIndex(train => {
+			console.log('sth');
+			return train.id === Number(id)});
 		if (trainIndex < 0) {
 			res.status(404).send(`Train with ID ${id} not found.`);
 			return;

@@ -7,7 +7,7 @@ module.exports = class Train {
 		destinationFrom,
 		destinationTo
 	) {
-		this.id = (Math.floor(Math.random() * 1000000) + 1).toString();
+		this.id = Math.floor(Math.random() * 1000000) + 1;
 		this.trainExpressName = trainExpressName;
 		this.countryOfOrigin = countryOfOrigin;
 		this.yearOfConstruction = yearOfConstruction;
