@@ -49,3 +49,37 @@ exports.createTrain = (req, res, next) => {
 		});
 	});
 };
+
+exports.updateTrain = (req, res, next) => {
+	const id = req.params.id;
+	const train = new Train(
+		req.body.trainExpressName,
+		req.body.countryOfOrigin,
+		req.body.yearOfConstruction,
+		req.body.maxKilometerPerHour,
+		req.body.destinationFrom,
+		req.body.destinationTo
+	);
+
+	train.id = id;
+
+	readTrains((err, trains) => {
+		if (err) {
+			res.status(500).send('An error occurred while reading the data.');
+			return;
+		}
+		const trainIndex = trains.findIndex(train => train.id === Number(id));
+		if (trainIndex < 0) {
+			res.status(404).send(`Train with ID ${trainId} not found.`);
+		} else {
+			trains[trainIndex] = train;
+			fs.writeFile(trainsPath, JSON.stringify(trains), err => {
+				if (err) {
+					res.status(500).send('An error occurred while saving the data.');
+				} else {
+					res.send(`Data updated successfully.`);
+				}
+			});
+		}
+	});
+};
