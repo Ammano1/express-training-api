@@ -2,6 +2,7 @@ const Train = require('../models/train');
 const fs = require('fs');
 const path = require('path');
 const trainsPath = path.join(__dirname, '../data/trains.json');
+const validateTrainData = require('../utils/validation.js');
 
 function readTrains(callback) {
 	fs.readFile(trainsPath, 'utf8', (err, data) => {
@@ -25,6 +26,10 @@ exports.getTrains = (req, res, next) => {
 };
 
 exports.createTrain = (req, res, next) => {
+	if (!validateTrainData(req.body, res)) {
+		return;
+	}
+
 	const train = new Train(
 		req.body.trainExpressName,
 		req.body.countryOfOrigin,
@@ -51,6 +56,10 @@ exports.createTrain = (req, res, next) => {
 };
 
 exports.updateTrain = (req, res, next) => {
+	if (!validateTrainData(req.body, res)) {
+		return;
+	}
+
 	const id = req.params.id;
 	const train = new Train(
 		req.body.trainExpressName,
@@ -70,7 +79,7 @@ exports.updateTrain = (req, res, next) => {
 		}
 		const trainIndex = trains.findIndex(train => train.id === Number(id));
 		if (trainIndex < 0) {
-			res.status(404).send(`Train with ID ${trainId} not found.`);
+			res.status(404).send(`Train with ID ${id} not found.`);
 		} else {
 			trains[trainIndex] = train;
 			fs.writeFile(trainsPath, JSON.stringify(trains), err => {
@@ -81,5 +90,32 @@ exports.updateTrain = (req, res, next) => {
 				}
 			});
 		}
+	});
+};
+
+exports.deleteTrain = (req, res, next) => {
+	const id = req.params.id;
+	readTrains((err, trains) => {
+		if (err) {
+			res.status(500).send('An error occurred while reading the data.');
+		}
+
+		const trainIndex = trains.findIndex(train => {
+			console.log('sth');
+			return train.id === Number(id)});
+		if (trainIndex < 0) {
+			res.status(404).send(`Train with ID ${id} not found.`);
+			return;
+		}
+
+		trains.splice(trainIndex, 1);
+
+		fs.writeFile(trainsPath, JSON.stringify(trains), err => {
+			if (err) {
+				res.status(500).send('An error occurred while saving the data.');
+			} else {
+				res.send(`Data deleted successfully.`);
+			}
+		});
 	});
 };
